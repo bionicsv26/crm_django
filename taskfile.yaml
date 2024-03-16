@@ -1,0 +1,41 @@
+version: '3'
+
+env:
+  PYTHONPATH: "{{ .PWD }}/src"
+  DJANGO_SETTINGS_MODULE: "crm.crm.settings"
+
+tasks:
+  update-dev-env:
+    cmds:
+      - pip install -r requirements/base.txt
+  createsuperuser:
+    cmds:
+      - django-admin createsuperuser
+  runserver:
+    cmds:
+      - django-admin runserver
+  shell:
+    cmds:
+      - django-admin shell
+  migrate:
+    cmds:
+      - django-admin createcachetable
+      - django-admin makemigrations
+      - django-admin migrate
+  makemigrations:
+    cmds:
+      - django-admin makemigrations
+  migrate_only:
+    cmds:
+      - django-admin migrate
+  createcachetable:
+    cmds:
+      - django-admin createcachetable
+  dumpdata-full:
+    cmds:
+      - django-admin dumpdata --exclude contenttypes --exclude admin.logentry --exclude sessions.session --exclude profiles --exclude auth.permission --indent 4 -o src/market/fixtures/full_db.json
+  loaddata-full:
+    cmds:
+      - django-admin createcachetable
+      - django-admin loaddata src/crm/fixtures/full_db.json
+
