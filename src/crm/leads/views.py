@@ -64,12 +64,12 @@ class LeadDeleteView(PermissionRequiredMixin, DeleteView):
 #         return HttpResponseRedirect(reverse_lazy('crm.customers:customers_create'))
 #
 #
-# class LeadTransferToContractView(PermissionRequiredMixin, View):
-#     """Класс для создания контракта на основании потенциального клиента."""
-#
-#     permission_required = "Contracts.add_contract"
-#
-#     def get(self, request, *args, **kwargs):
-#         """Метод get сохраняет в кэш значение lead_id и запускает создание контракта"""
-#         cache.set('lead_id', kwargs['pk'], timeout=5)
-#         return HttpResponseRedirect(reverse_lazy('crm.contracts:contracts_create'))
+class LeadTransferToContractView(PermissionRequiredMixin, View):
+    """Класс для создания контракта на основании потенциального клиента."""
+
+    permission_required = "Contracts.add_contract"
+
+    def get(self, request, *args, **kwargs):
+        """Метод get сохраняет в кэш значение lead_id и запускает создание контракта"""
+        cache.set('lead_id', kwargs['pk'], timeout=5)
+        return HttpResponseRedirect(reverse_lazy('crm.contracts:contracts_create'))

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'crm.products.apps.ProductsConfig',
     'crm.ads.apps.AdsConfig',
     'crm.leads.apps.LeadsConfig',
+    'crm.contracts.apps.ContractsConfig',
 ]
 
 MIDDLEWARE = [

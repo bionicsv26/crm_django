@@ -1,0 +1,66 @@
+[
+{
+    "model": "contracts.contract",
+    "pk": 1,
+    "fields": {
+        "name": "Андреев А - автовышка",
+        "lead": 5,
+        "ads": 1,
+        "product": 1,
+        "document": "",
+        "comment": "",
+        "cost": "4500.00",
+        "conclusion_day": "2024-02-17",
+        "start_day": "2024-02-18",
+        "end_day": "2024-02-20"
+    }
+},
+{
+    "model": "contracts.contract",
+    "pk": 2,
+    "fields": {
+        "name": "Иванова М - автовышка",
+        "lead": 3,
+        "ads": 1,
+        "product": 1,
+        "document": "",
+        "comment": "",
+        "cost": "3200.00",
+        "conclusion_day": "2024-03-02",
+        "start_day": "2024-03-03",
+        "end_day": "2024-03-03"
+    }
+},
+{
+    "model": "contracts.contract",
+    "pk": 3,
+    "fields": {
+        "name": "Иванов А - автовышка",
+        "lead": 1,
+        "ads": 1,
+        "product": 1,
+        "document": "",
+        "comment": "",
+        "cost": "5000.00",
+        "conclusion_day": "2024-03-01",
+        "start_day": "2024-03-01",
+        "end_day": "2024-03-02"
+    }
+},
+{
+    "model": "contracts.contract",
+    "pk": 4,
+    "fields": {
+        "name": "Сидоров П - манипулятор",
+        "lead": 7,
+        "ads": 2,
+        "product": 3,
+        "document": "",
+        "comment": "",
+        "cost": "12000.00",
+        "conclusion_day": "2024-03-01",
+        "start_day": "2024-03-06",
+        "end_day": "2024-03-07"
+    }
+}
+]
