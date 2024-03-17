@@ -73,5 +73,83 @@
         "description": "В разработке",
         "budget": "15000.00"
     }
+},
+{
+    "model": "leads.lead",
+    "pk": 1,
+    "fields": {
+        "first_name": "Алексей",
+        "last_name": "Иванов",
+        "email": "s100@bk.ru",
+        "phone": "86358456981",
+        "ads": 1,
+        "comment": "Пока не готов",
+        "to_active": true
+    }
+},
+{
+    "model": "leads.lead",
+    "pk": 2,
+    "fields": {
+        "first_name": "Иван",
+        "last_name": "Петров",
+        "email": "skv2@bk.ru",
+        "phone": "+79289289282",
+        "ads": 1,
+        "comment": "Цены слишком высокие",
+        "to_active": false
+    }
+},
+{
+    "model": "leads.lead",
+    "pk": 3,
+    "fields": {
+        "first_name": "Марина",
+        "last_name": "Иванова",
+        "email": "marina@mail.ru",
+        "phone": "+79998887766",
+        "ads": 1,
+        "comment": "узнать через неделю",
+        "to_active": false
+    }
+},
+{
+    "model": "leads.lead",
+    "pk": 5,
+    "fields": {
+        "first_name": "Андрей",
+        "last_name": "Андреев",
+        "email": "any@any.com",
+        "phone": "+79288000001",
+        "ads": 1,
+        "comment": "Скоро понадобиться",
+        "to_active": true
+    }
+},
+{
+    "model": "leads.lead",
+    "pk": 6,
+    "fields": {
+        "first_name": "Маргарита",
+        "last_name": "Петрова",
+        "email": "k2@bk.ru",
+        "phone": "+79111111111",
+        "ads": 2,
+        "comment": "",
+        "to_active": false
+    }
+},
+{
+    "model": "leads.lead",
+    "pk": 7,
+    "fields": {
+        "first_name": "Петр",
+        "last_name": "Сидоров",
+        "email": "s2@bk.ru",
+        "phone": "+79881001001",
+        "ads": 2,
+        "comment": "Позже забью",
+        "to_active": true
+    }
 }
 ]
