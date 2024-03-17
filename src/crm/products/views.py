@@ -53,12 +53,12 @@ class ProductDeleteView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('crm.products:products_list')
 
 
-# class ProductTransferToAdsView(PermissionRequiredMixin, View):
-#     """Класс для создания рекламной компании на основании услуги."""
-#
-#     permission_required = "ads.add_ads"
-#
-#     def get(self, request, *args, **kwargs):
-#         """Метод get сохраняет в кэш значение product_id и запускает создание рекламной компании"""
-#         cache.set('product_id', kwargs['pk'], timeout=5)
-#         return HttpResponseRedirect(reverse_lazy('crm.ads:ads_create'))
+class ProductTransferToAdsView(PermissionRequiredMixin, View):
+    """Класс для создания рекламной компании на основании услуги."""
+
+    permission_required = "ads.add_ads"
+
+    def get(self, request, *args, **kwargs):
+        """Метод get сохраняет в кэш значение product_id и запускает создание рекламной компании"""
+        cache.set('product_id', kwargs['pk'], timeout=5)
+        return HttpResponseRedirect(reverse_lazy('crm.ads:ads_create'))
