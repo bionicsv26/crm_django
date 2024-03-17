@@ -1,0 +1,44 @@
+[
+{
+    "model": "users.customuser",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$600000$cBF6xFZy6NEjrkbbLpVVXf$QughHTPhdkvflmXPajEoGk6SqSeysGlQymXhLeCED2k=",
+        "last_login": "2024-03-17T08:18:45.522Z",
+        "is_superuser": true,
+        "full_name": "админ",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2024-03-16T17:22:10.878Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+        "name": "Автовышка",
+        "description": "Вылет стрелы 10 м, вес до 300 кг",
+        "price": "1500.00"
+    }
+},
+{
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+        "name": "Автокран",
+        "description": "Вылет стрелы до 15 м, вес до 5 т",
+        "price": "5000.00"
+    }
+},
+{
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+        "name": "Манипулятор",
+        "description": "Вылет стрелы 7 м, вес до 2 т",
+        "price": "3500.00"
+    }
+}
+]

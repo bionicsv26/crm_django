@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 from ..crm import settings
 # from ..customers.models import Customer
 # from ..leads.models import Lead
-# from ..products.models import Product
+from ..products.models import Product
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -16,7 +16,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context["products_count"] = Product.objects.all().count()
+        context["products_count"] = Product.objects.all().count()
         # context["advertisements_count"] = Ads.objects.all().count()
         # context["leads_count"] = Lead.objects.all().count()
         # context["customers_count"] = Customer.objects.all().count()
