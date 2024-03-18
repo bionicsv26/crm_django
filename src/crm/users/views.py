@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 from ..ads.models import Ads
 from ..crm import settings
-# from ..customers.models import Customer
+from ..customers.models import Customer
 from ..leads.models import Lead
 from ..products.models import Product
 
@@ -19,5 +19,5 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context["products_count"] = Product.objects.all().count()
         context["advertisements_count"] = Ads.objects.all().count()
         context["leads_count"] = Lead.objects.all().count()
-        # context["customers_count"] = Customer.objects.all().count()
+        context["customers_count"] = Customer.objects.all().count()
         return context

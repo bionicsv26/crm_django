@@ -1,0 +1,114 @@
+[
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "Маркетологи",
+        "permissions": [
+            [
+                "add_ads",
+                "ads",
+                "ads"
+            ],
+            [
+                "change_ads",
+                "ads",
+                "ads"
+            ],
+            [
+                "view_ads",
+                "ads",
+                "ads"
+            ],
+            [
+                "add_product",
+                "products",
+                "product"
+            ],
+            [
+                "change_product",
+                "products",
+                "product"
+            ],
+            [
+                "view_product",
+                "products",
+                "product"
+            ]
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+        "name": "Операторы",
+        "permissions": [
+            [
+                "add_lead",
+                "leads",
+                "lead"
+            ],
+            [
+                "change_lead",
+                "leads",
+                "lead"
+            ],
+            [
+                "view_lead",
+                "leads",
+                "lead"
+            ]
+        ]
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+        "name": "Менеджеры",
+        "permissions": [
+            [
+                "add_contract",
+                "contracts",
+                "contract"
+            ],
+            [
+                "change_contract",
+                "contracts",
+                "contract"
+            ],
+            [
+                "view_contract",
+                "contracts",
+                "contract"
+            ],
+            [
+                "add_customer",
+                "customers",
+                "customer"
+            ],
+            [
+                "change_customer",
+                "customers",
+                "customer"
+            ],
+            [
+                "view_customer",
+                "customers",
+                "customer"
+            ],
+            [
+                "can_transfer_to_active",
+                "leads",
+                "lead"
+            ],
+            [
+                "view_lead",
+                "leads",
+                "lead"
+            ]
+        ]
+    }
+}
+]

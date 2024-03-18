@@ -53,17 +53,17 @@ class LeadDeleteView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('crm.leads:leads_list')
 
 
-# class LeadTransferToActiveView(PermissionRequiredMixin, View):
-#     """Класс для перевода потенциальных клиентов в активные."""
-#
-#     permission_required = "leads.can_transfer_to_active"
-#
-#     def get(self, request, *args, **kwargs):
-#         """Метод get сохраняет в кэш значение lead_id и запускает создание покупателя"""
-#         cache.set('lead_id', kwargs['pk'], timeout=5)
-#         return HttpResponseRedirect(reverse_lazy('crm.customers:customers_create'))
-#
-#
+class LeadTransferToActiveView(PermissionRequiredMixin, View):
+    """Класс для перевода потенциальных клиентов в активные."""
+
+    permission_required = "leads.can_transfer_to_active"
+
+    def get(self, request, *args, **kwargs):
+        """Метод get сохраняет в кэш значение lead_id и запускает создание покупателя"""
+        cache.set('lead_id', kwargs['pk'], timeout=5)
+        return HttpResponseRedirect(reverse_lazy('crm.customers:customers_create'))
+
+
 class LeadTransferToContractView(PermissionRequiredMixin, View):
     """Класс для создания контракта на основании потенциального клиента."""
 

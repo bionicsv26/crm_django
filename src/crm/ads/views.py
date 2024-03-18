@@ -84,13 +84,12 @@ class AdsStatisticView(LoginRequiredMixin, ListView):
 
     template_name = 'ads/ads-statistic.html'
     context_object_name = 'ads'
-    model = Ads
-    # queryset = (Ads.objects.values('name')
-    #             .annotate(
-    #                 leads_count=Count('lead', distinct=True),
-    #                 customers_count=Count('customer', distinct=True),
-    #                 ads_budget=Sum('budget', distinct=True),
-    #                 ads_profit=Sum('customer__contract__cost', distinct=True))
-    #             .annotate(profit=(Cast('ads_profit', FloatField())
-    #                       / Cast('ads_budget', FloatField())
-    #                       )))
+    queryset = (Ads.objects.values('name')
+                .annotate(
+                    leads_count=Count('lead', distinct=True),
+                    customers_count=Count('customer', distinct=True),
+                    ads_budget=Sum('budget', distinct=True),
+                    ads_profit=Sum('customer__contract__cost', distinct=True))
+                .annotate(profit=(Cast('ads_profit', FloatField())
+                          / Cast('ads_budget', FloatField())
+                          )))

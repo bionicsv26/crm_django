@@ -1,0 +1,32 @@
+[
+{
+    "model": "customers.customer",
+    "pk": 1,
+    "fields": {
+        "lead": 5,
+        "ads": 1,
+        "contract": 1,
+        "comment": "важная информация"
+    }
+},
+{
+    "model": "customers.customer",
+    "pk": 3,
+    "fields": {
+        "lead": 1,
+        "ads": 1,
+        "contract": 3,
+        "comment": ""
+    }
+},
+{
+    "model": "customers.customer",
+    "pk": 4,
+    "fields": {
+        "lead": 7,
+        "ads": 2,
+        "contract": 4,
+        "comment": "Отлично"
+    }
+}
+]
