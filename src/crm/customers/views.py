@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.core.cache import cache
 from django.db import transaction
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -7,7 +6,8 @@ from django.views import View
 from django.views.generic import ListView, UpdateView, DetailView, DeleteView
 
 from .forms import CustomerForm
-from .models import Customer, Ads, Lead, Contract
+from .models import Customer
+from ..contracts.views import get_data_for_form
 
 
 class CustomerListView(PermissionRequiredMixin, ListView):
@@ -40,13 +40,9 @@ class CustomerCreateView(PermissionRequiredMixin, View):
         если есть, то выдает форму с предзаполнеными данными,
         иначе выдает пустую.
         """
-        lead_id = cache.get('lead_id')
-        cache.delete('lead_id')
-        if lead_id:
-            lead = Lead.objects.filter(id=lead_id).first()
-            ads = Ads.objects.filter(lead__id=lead_id).first()
-            contract = Contract.objects.filter(lead__id=lead_id).first()
-            form = CustomerForm(data={'lead': lead, 'ads': ads, 'contract': contract})
+        dict_data_for_form = get_data_for_form()
+        if dict_data_for_form is not None:
+            form = CustomerForm(data=dict_data_for_form)
         else:
             form = CustomerForm()
 

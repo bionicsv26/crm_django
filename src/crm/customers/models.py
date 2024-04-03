@@ -11,7 +11,12 @@ class Customer(models.Model):
 
     lead = models.ForeignKey(Lead, on_delete=models.CASCADE, verbose_name='Покупатель')
     ads = models.ForeignKey(Ads, on_delete=models.CASCADE, verbose_name='Рекламная кампания')
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Контракт')
+    contract = models.ForeignKey(Contract,
+                                 on_delete=models.CASCADE,
+                                 blank=True,
+                                 null=True,
+                                 verbose_name='Контракт'
+                                 )
     comment = models.TextField(blank=True, verbose_name='Комментарий')
 
     class Meta:

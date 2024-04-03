@@ -16,7 +16,11 @@ class Contract(models.Model):
                                 on_delete=models.CASCADE,
                                 verbose_name='Услуга по контракту'
                                 )
-    document = models.FileField(upload_to='documents/', blank=True, null=True, verbose_name='Скан контракта')
+    document = models.FileField(upload_to='documents/',
+                                blank=True,
+                                null=True,
+                                verbose_name='Скан контракта'
+                                )
     comment = models.TextField(blank=True, null=True, verbose_name='Комментарий')
     cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Стоимость контракта')
     conclusion_day = models.DateField(verbose_name='Дата заключения контракта')

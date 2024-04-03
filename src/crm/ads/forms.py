@@ -1,17 +1,9 @@
-from django import forms
-
+from .mixins import MixinProductForm
 from .models import Ads
-from ..products.models import Product
 
 
-class AdsForm(forms.ModelForm):
+class AdsForm(MixinProductForm):
     """Класс формы для создания или редактирования рекламной компании."""
-
-    product = forms.ModelChoiceField(
-        queryset=Product.objects.all(),
-        empty_label="Услуга не выбрана",
-        label='Услуга'
-    )
 
     class Meta:
         model = Ads

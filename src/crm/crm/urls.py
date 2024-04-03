@@ -23,7 +23,8 @@ from ..crm import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(
+        template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('products/', include('crm.products.urls')),
     path('ads/', include('crm.ads.urls')),

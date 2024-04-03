@@ -1,23 +1,13 @@
 from django import forms
 
 from .models import Customer
-from ..ads.models import Ads
+from ..contracts.mixins import MixinLeadAdsForm
 from ..contracts.models import Contract
-from ..leads.models import Lead
 
 
-class CustomerForm(forms.ModelForm):
+class CustomerForm(MixinLeadAdsForm):
     """Класс формы для создания или редактирования покупателя."""
 
-    lead = forms.ModelChoiceField(
-        queryset=Lead.objects.filter(to_active=False),
-        empty_label="Клиент не выбран",
-        label='Потенциальный клиент'
-    )
-    ads = forms.ModelChoiceField(
-        queryset=Ads.objects.all(),
-        empty_label="Рекламная компания не выбрана",
-        label='Рекламная компания')
     contract = forms.ModelChoiceField(
         queryset=Contract.objects.all(),
         empty_label="Контракт не выбран",
@@ -29,15 +19,8 @@ class CustomerForm(forms.ModelForm):
         model = Customer
         fields = '__all__'
 
-    def clean_ads(self):
-        ads = self.cleaned_data['ads']
-        lead = self.cleaned_data['lead']
-        if lead.ads.id != ads.id:
-            self.add_error('ads', 'Выбранная рекламная компания не соответствует'
-                                  ' выбранному пользователю')
-        return ads
-
     def clean_contract(self):
+        """Метод проверяет соответствует ли выбранный контракт пользователю и компании"""
         ads = self.cleaned_data['ads']
         lead = self.cleaned_data['lead']
         contract = self.cleaned_data['contract']
@@ -47,5 +30,5 @@ class CustomerForm(forms.ModelForm):
                                            ' выбранному пользователю')
             if ads.id != contract.ads.id:
                 self.add_error('contract', 'Выбранный контракт не соответствует'
-                                           ' выбранноq рекламной компании')
+                                           ' выбранной рекламной компании')
         return contract

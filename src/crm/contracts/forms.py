@@ -1,29 +1,13 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
+from .mixins import MixinLeadAdsForm
 from .models import Contract
-from ..ads.models import Ads
-from ..leads.models import Lead
-from ..products.models import Product
+from ..ads.mixins import MixinProductForm
 
 
-class ContractForm(forms.ModelForm):
+class ContractForm(MixinProductForm, MixinLeadAdsForm):
     """Класс формы для создания или редактирования контракта."""
-
-    lead = forms.ModelChoiceField(
-        queryset=Lead.objects.filter(to_active=False),
-        empty_label="Клиент не выбран",
-        label='Потенциальный клиент'
-    )
-    ads = forms.ModelChoiceField(
-        queryset=Ads.objects.all(),
-        empty_label="Рекламная компания не выбрана",
-        label='Рекламная компания')
-    product = forms.ModelChoiceField(
-        queryset=Product.objects.all(),
-        empty_label="Услуга не выбрана",
-        label='Услуга'
-    )
 
     class Meta:
         model = Contract
@@ -57,17 +41,10 @@ class ContractForm(forms.ModelForm):
 
         return end_day
 
-    def clean_ads(self):
-        ads = self.cleaned_data['ads']
-        lead = self.cleaned_data['lead']
-        if lead.ads.id != ads.id:
-            self.add_error('ads', 'Выбранная рекламная компания не соответствует'
-                                  ' выбранному пользователю')
-        return ads
-
     def clean_product(self):
+        """Метод проверяет соответствует ли выбранная услуга выбранной компании"""
         ads = self.cleaned_data['ads']
         product = self.cleaned_data['product']
         if product.id != ads.product.id:
-            self.add_error('product', 'Выбранная услуга не соответствует выбранной рекламной акции')
+            self.add_error('product', 'Выбранная услуга не соответствует выбранной рекламной компании')
         return product

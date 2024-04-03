@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.cache import cache
 from django.shortcuts import redirect, render
@@ -29,6 +31,22 @@ class ContractDetailView(PermissionRequiredMixin, DetailView):
     template_name = 'contracts/contracts-detail.html'
 
 
+def get_data_for_form() -> Optional[dict]:
+    """Функция проверяет есть ли в кэше параметр lead_id:
+        если есть, то возвращает словарь с предзаполнеными данными,
+        иначе возвращает None."""
+    lead_id = cache.get('lead_id')
+    cache.delete('lead_id')
+    if lead_id:
+        lead = Lead.objects.filter(id=lead_id).first()
+        ads = Ads.objects.filter(lead__id=lead_id).first()
+        product = Product.objects.filter(ads__lead__id=lead_id).first()
+        contract = Contract.objects.filter(lead__id=lead_id).first()
+        dict_data_for_form: dict = {'lead': lead, 'ads': ads, 'product': product, 'contract': contract}
+        return dict_data_for_form
+    return None
+
+
 class ContractCreateView(PermissionRequiredMixin, View):
     """Класс для создания контракта."""
 
@@ -42,13 +60,9 @@ class ContractCreateView(PermissionRequiredMixin, View):
         если есть, то выдает форму с предзаполнеными данными,
         иначе выдает пустую.
         """
-        lead_id = cache.get('lead_id')
-        cache.delete('lead_id')
-        if lead_id:
-            lead = Lead.objects.filter(id=lead_id).first()
-            ads = Ads.objects.filter(lead__id=lead_id).first()
-            product = Product.objects.filter(ads__lead__id=lead_id).first()
-            form = ContractForm(data={'lead': lead, 'ads': ads, 'product': product})
+        dict_data_for_form = get_data_for_form()
+        if dict_data_for_form is not None:
+            form = ContractForm(data=dict_data_for_form)
         else:
             form = ContractForm()
 
