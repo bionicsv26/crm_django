@@ -13,26 +13,49 @@ from crm.products.models import Product
 User = get_user_model()
 
 
-class ProductCreateViewTest(TestCase):
-    """Тесты для класса ProductCreateView."""
+class ProductTestMixin(TestCase):
+    """Миксин для создания тестового продукта, пользователя и клиента."""
 
     @classmethod
     def setUpTestData(cls):
-        """Метод создает пользователя и клиента."""
+        """Метод создает тестовый продукт, пользователя и клиента."""
+        cls.product = Product.objects.create(name="Test product",
+                                             description="Test description of product",
+                                             price=10.0,
+                                             )
         cls.user = User.objects.create_user('test_user', password='test_password')
         cls.client = Client()
 
+    # def setUp(self):
+    #     """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
+    #     # self.permission = Permission.objects.filter(codename__in=('add_ads', 'view_ads'))
+    #     self.user.user_permissions.add(*self.permission)
+    #     print(self.user.user_permissions)
+    #     self.client.login(username='test_user', password='test_password')
+
+
+class ProductCreateViewTest(ProductTestMixin, TestCase):
+    """Тесты для класса ProductCreateView."""
+
+    # @classmethod
+    # def setUpTestData(cls):
+    #     """Метод создает пользователя и клиента."""
+    #     cls.user = User.objects.create_user('test_user', password='test_password')
+    #     cls.client = Client()
+
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
+        super().setUp()
         self.permission = Permission.objects.filter(codename__in=('add_product', 'view_product'))
         self.user.user_permissions.add(*self.permission)
-        self.client.login(username='test_user', password='test_password')
+        print(1, self.user.user_permissions)
+
 
     def test_success_url(self):
         """Тест проверяет, что после успешного создания нового товара (услуги) происходит переход на список товаров."""
         form_data = {
-            'name': 'Test Product',
-            'description': 'Test description',
+            'name': 'Test new product',
+            'description': 'Test description of new product',
             'price': 100,
         }
 
@@ -241,6 +264,7 @@ class ProductDeleteViewTest(TestCase):
 
 class ProductTransferToAdsViewTest(TestCase):
     """Тесты для класса ProductTransferToAdsView."""
+
     @classmethod
     def setUpTestData(cls):
         """Метод подготавливает тестовую фикстуру товара (услуги), создает пользователя и клиента."""

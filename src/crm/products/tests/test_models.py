@@ -4,6 +4,7 @@ from ..models import Product
 
 
 class ProductModelTest(TestCase):
+    """Тесты для модели класса Product."""
 
     @classmethod
     def setUpTestData(cls):
