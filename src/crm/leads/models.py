@@ -38,7 +38,7 @@ class Lead(models.Model):
         return reverse("crm.leads:leads_detail", args=[str(self.pk)])
 
     def __str__(self) -> str:
-        full_name: str = f"{self.first_name}, {self.last_name}"
+        full_name: str = f"{self.first_name} {self.last_name}"
         return full_name.strip()
 
     def is_active(self) -> bool:

@@ -26,14 +26,13 @@ class Contract(models.Model):
     conclusion_day = models.DateField(verbose_name='Дата заключения контракта')
     start_day = models.DateField(verbose_name='Начало действия контракта')
     end_day = models.DateField(verbose_name='Окончание действия контракта')
-
     class Meta:
         verbose_name = 'контракт'
         verbose_name_plural = 'контракты'
 
     def get_absolute_url(self) -> str:
         """Метод возвращает абсолютный адрес контракта."""
-        return reverse("crm.contracts:contracts_detail", args=[str(self.pk)])
+        return reverse("crm.contracts:contract_detail", args=[str(self.pk)])
 
     def __str__(self) -> str:
         return f"Контракт № {self.pk}, клиент:{self.lead}, услуга:{self.product}"

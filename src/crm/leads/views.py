@@ -67,9 +67,9 @@ class LeadTransferToActiveView(PermissionRequiredMixin, View):
 class LeadTransferToContractView(PermissionRequiredMixin, View):
     """Класс для создания контракта на основании потенциального клиента."""
 
-    permission_required = "Contracts.add_contract"
+    permission_required = "contracts.add_contract"
 
     def get(self, request, *args, **kwargs):
         """Метод get сохраняет в кэш значение lead_id и запускает создание контракта"""
         cache.set('lead_id', kwargs['pk'], timeout=5)
-        return HttpResponseRedirect(reverse_lazy('crm.contracts:contracts_create'))
+        return HttpResponseRedirect(reverse_lazy('crm.contracts:contract_create'))

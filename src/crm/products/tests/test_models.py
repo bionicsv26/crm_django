@@ -3,28 +3,28 @@ from django.test import TestCase
 from ..models import Product
 
 
-class ProductModelTest(TestCase):
-    """Тесты для модели класса Product."""
+class ProductModelMixinTest(TestCase):
+    """Миксин для тестов модели класса Product."""
 
     @classmethod
     def setUpTestData(cls):
         """Метод создает тестовый товар."""
         cls.product = Product.objects.create(name='Test product', description='Test description', price=100)
 
-    def test_name_label(self):
-        """Тест проверяет корректность описания поля name."""
-        field_label = self.product._meta.get_field('name').verbose_name
-        self.assertEquals(field_label, 'Название услуги')
+class ProductModelTest(ProductModelMixinTest, TestCase):
+    """Тесты для модели класса Product."""
 
-    def test_description_label(self):
-        """Тест проверяет корректность описания поля description."""
-        field_label = self.product._meta.get_field('description').verbose_name
-        self.assertEquals(field_label, 'Описание услуги')
-
-    def test_price_label(self):
-        """Тест проверяет корректность описания поля price."""
-        field_label = self.product._meta.get_field('price').verbose_name
-        self.assertEquals(field_label, 'Цена услуги')
+    def test_verbose_name_label(self):
+        """Проверка заполнения verbose_name."""
+        field_verboses = {'name': 'Название услуги',
+                          'description': 'Описание услуги',
+                          'price': 'Цена услуги'}
+        for field, expected_value in field_verboses.items():
+            with self.subTest(field=field):
+                error_name = f'Поле {field} ожидало значение {expected_value}'
+                self.assertEqual(
+                    self.product._meta.get_field(field).verbose_name,
+                    expected_value, error_name)
 
     def test_name_max_length(self):
         """Тест проверяет макcимальную длину поля name."""
@@ -39,5 +39,4 @@ class ProductModelTest(TestCase):
 
     def test_get_absolute_url(self):
         """Тест проверяет, что метод get_absolute_url возвращает корректный URL."""
-
         self.assertEquals(self.product.get_absolute_url(), f"/products/{self.product.id}/")

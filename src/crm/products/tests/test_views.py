@@ -9,47 +9,30 @@ from django.urls import reverse_lazy
 
 from crm.products.forms import ProductForm
 from crm.products.models import Product
+from crm.products.tests.test_models import ProductModelMixinTest
 
 User = get_user_model()
 
 
-class ProductTestMixin(TestCase):
-    """Миксин для создания тестового продукта, пользователя и клиента."""
+class ProductMixinViewTest(ProductModelMixinTest, TestCase):
+    """Миксин для тестов классов ProductView."""
 
     @classmethod
     def setUpTestData(cls):
         """Метод создает тестовый продукт, пользователя и клиента."""
-        cls.product = Product.objects.create(name="Test product",
-                                             description="Test description of product",
-                                             price=10.0,
-                                             )
+        super().setUpTestData()
         cls.user = User.objects.create_user('test_user', password='test_password')
         cls.client = Client()
 
-    # def setUp(self):
-    #     """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
-    #     # self.permission = Permission.objects.filter(codename__in=('add_ads', 'view_ads'))
-    #     self.user.user_permissions.add(*self.permission)
-    #     print(self.user.user_permissions)
-    #     self.client.login(username='test_user', password='test_password')
 
-
-class ProductCreateViewTest(ProductTestMixin, TestCase):
+class ProductCreateViewTest(ProductMixinViewTest, TestCase):
     """Тесты для класса ProductCreateView."""
-
-    # @classmethod
-    # def setUpTestData(cls):
-    #     """Метод создает пользователя и клиента."""
-    #     cls.user = User.objects.create_user('test_user', password='test_password')
-    #     cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
-        super().setUp()
         self.permission = Permission.objects.filter(codename__in=('add_product', 'view_product'))
         self.user.user_permissions.add(*self.permission)
-        print(1, self.user.user_permissions)
-
+        self.client.login(username='test_user', password='test_password')
 
     def test_success_url(self):
         """Тест проверяет, что после успешного создания нового товара (услуги) происходит переход на список товаров."""
@@ -87,19 +70,8 @@ class ProductCreateViewTest(ProductTestMixin, TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class ProductListViewTest(TestCase):
+class ProductListViewTest(ProductMixinViewTest, TestCase):
     """Тесты для класса ProductListView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """Метод подготавливает тестовые фикстуры списка товаров (услуг), создает пользователя и клиента."""
-        for idx in range(1, 4):
-            Product.objects.create(name=f"Test Product {idx}",
-                                   description=f"Test description {idx}",
-                                   price=10.0
-                                   )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -110,7 +82,7 @@ class ProductListViewTest(TestCase):
     def test_count_products_in_list(self):
         """Тест проверяет, что список товаров (услуг) содержит 3 элемента."""
         response = self.client.get(reverse_lazy('crm.products:products_list'))
-        self.assertEqual(len(response.context['products']), 3)
+        self.assertEqual(len(response.context['products']), 1)
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
@@ -129,18 +101,8 @@ class ProductListViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class ProductDetailViewTest(TestCase):
+class ProductDetailViewTest(ProductMixinViewTest, TestCase):
     """Тесты для класса ProductDetailView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """Метод подготавливает тестовую фикстуру товара (услуги), создает пользователя и клиента."""
-        cls.product = Product.objects.create(name="Test Product",
-                                             description="Test description",
-                                             price=10.0
-                                             )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -157,7 +119,7 @@ class ProductDetailViewTest(TestCase):
         """Тест проверяет, что с разрешением view_product пользователь может видеть детальное описание товара."""
         response = self.client.get(reverse('crm.products:product_detail', kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['product'].name, 'Test Product')
+        self.assertEqual(response.context['product'].name, 'Test product')
 
     def test_without_permission_view_product(self):
         """Тест проверяет, что без разрешения view_product пользователь получает ошибку 403."""
@@ -166,18 +128,8 @@ class ProductDetailViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class ProductUpdateViewTest(TestCase):
+class ProductUpdateViewTest(ProductMixinViewTest, TestCase):
     """Тесты для класса ProductUpdateView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """Метод подготавливает тестовую фикстуру товара (услуги), создает пользователя и клиента."""
-        cls.product = Product.objects.create(name="Test Product",
-                                             description="Test description",
-                                             price=10.0
-                                             )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -217,18 +169,8 @@ class ProductUpdateViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class ProductDeleteViewTest(TestCase):
+class ProductDeleteViewTest(ProductMixinViewTest, TestCase):
     """Тесты для класса ProductDeleteView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """Метод подготавливает тестовую фикстуру товара (услуги), создает пользователя и клиента."""
-        cls.product = Product.objects.create(name="Test Product",
-                                             description="Test description",
-                                             price=10.0
-                                             )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -262,18 +204,8 @@ class ProductDeleteViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class ProductTransferToAdsViewTest(TestCase):
+class ProductTransferToAdsViewTest(ProductMixinViewTest, TestCase):
     """Тесты для класса ProductTransferToAdsView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """Метод подготавливает тестовую фикстуру товара (услуги), создает пользователя и клиента."""
-        cls.product = Product.objects.create(name="Test Product",
-                                             description="Test description",
-                                             price=10.0
-                                             )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -286,6 +218,7 @@ class ProductTransferToAdsViewTest(TestCase):
         Тест проверяет, что в кэш сохраняется значение product_id и
         происходит перенаправление к созданию рекламной компании.
         """
+        cache.clear()
         cached_product_id = cache.get('product_id')
         self.assertIsNone(cached_product_id)
 

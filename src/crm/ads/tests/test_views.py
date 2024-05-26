@@ -1,7 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
-from django.core.cache import cache
-from django.http import HttpResponseRedirect
 from django.test import Client
 from django.test import TestCase
 from django.urls import reverse
@@ -9,49 +7,30 @@ from django.urls import reverse_lazy
 
 from crm.ads.forms import AdsForm
 from crm.ads.models import Ads
-from crm.products.models import Product
+from crm.ads.tests.test_models import AdsModelMixinTest
 
 User = get_user_model()
 
 
-class ProductTestMixin(TestCase):
-    """Тесты для класса AdsCreateView."""
+class AdsMixinViewTest(AdsModelMixinTest, TestCase):
+    """Миксин для тестов классов AdsView."""
 
     @classmethod
     def setUpTestData(cls):
         """Метод создает тестовый продукт, пользователя и клиента."""
-        cls.product = Product.objects.create(name="Test Product",
-                                             description="Test description",
-                                             price=10.0,
-                                             )
+        super().setUpTestData()
         cls.user = User.objects.create_user('test_user', password='test_password')
         cls.client = Client()
 
-    def setUp(self):
-        """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
-        # self.permission = Permission.objects.filter(codename__in=('add_ads', 'view_ads'))
-        # self.user.user_permissions.add(*self.permission)
-        self.client.login(username='test_user', password='test_password')
 
-
-class AdsCreateViewTest(ProductTestMixin, TestCase):
+class AdsCreateViewTest(AdsMixinViewTest, TestCase):
     """Тесты для класса AdsCreateView."""
-
-    # @classmethod
-    # def setUpTestData(cls):
-    #     """Метод создает тестовый продукт, пользователя и клиента."""
-    #     cls.product = Product.objects.create(name="Test Product",
-    #                                          description="Test description",
-    #                                          price=10.0,
-    #                                          )
-    #     cls.user = User.objects.create_user('test_user', password='test_password')
-    #     cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
         self.permission = Permission.objects.filter(codename__in=('add_ads', 'view_ads'))
         self.user.user_permissions.add(*self.permission)
-        super().setUp()
+        self.client.login(username='test_user', password='test_password')
 
     def test_success_url(self):
         """
@@ -81,7 +60,7 @@ class AdsCreateViewTest(ProductTestMixin, TestCase):
         response = self.client.get(reverse('crm.ads:ads_create'))
         self.assertTemplateUsed(response, 'ads/ads-create.html')
 
-    def test_with_permission_add_product(self):
+    def test_with_permission_add_ads(self):
         """Тест проверяет, что с разрешением add_ads пользователь может создавать новые рекламные компании."""
         response = self.client.get(reverse('crm.ads:ads_create'))
         self.assertEqual(response.status_code, 200)
@@ -93,24 +72,8 @@ class AdsCreateViewTest(ProductTestMixin, TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class AdsListViewTest(TestCase):
+class AdsListViewTest(AdsMixinViewTest, TestCase):
     """Тесты для класса AdsListView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """Метод подготавливает тестовые фикстуры списка , создает пользователя и клиента."""
-        for idx in range(1, 4):
-            cls.product = Product.objects.create(name=f"Test Product {idx}",
-                                                 description=f"Test description {idx}",
-                                                 price=10.0 * idx,
-                                                 )
-            Ads.objects.create(name=f"Test ads {idx}",
-                               description=f"Test ads description {idx}",
-                               budget=1000 * idx,
-                               product=cls.product
-                               )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -121,7 +84,7 @@ class AdsListViewTest(TestCase):
     def test_count_ads_in_list(self):
         """Тест проверяет, что список рекламных компаний содержит 3 элемента."""
         response = self.client.get(reverse_lazy('crm.ads:ads_list'))
-        self.assertEqual(len(response.context['ads']), 3)
+        self.assertEqual(len(response.context['ads']), 1)
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
@@ -140,25 +103,8 @@ class AdsListViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class AdsDetailViewTest(TestCase):
+class AdsDetailViewTest(AdsMixinViewTest, TestCase):
     """Тесты для класса AdsDetailView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """
-        Метод подготавливает тестовую фикстуру товара (услуги) и рекламной компании, создает пользователя и клиента.
-         """
-        cls.product = Product.objects.create(name="Test Product",
-                                             description="Test description",
-                                             price=10.0,
-                                             )
-        cls.ads = Ads.objects.create(name="Test ads",
-                                     description="Test ads description",
-                                     budget=1000,
-                                     product=cls.product
-                                     )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -188,25 +134,8 @@ class AdsDetailViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class AdsUpdateViewTest(TestCase):
+class AdsUpdateViewTest(AdsMixinViewTest, TestCase):
     """Тесты для класса AdsUpdateView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """
-        Метод подготавливает тестовую фикстуру товара (услуги) и рекламной компании, создает пользователя и клиента.
-         """
-        cls.product = Product.objects.create(name="Test Product",
-                                             description="Test description",
-                                             price=10.0,
-                                             )
-        cls.ads = Ads.objects.create(name="Test ads",
-                                     description="Test ads description",
-                                     budget=1000,
-                                     product=cls.product
-                                     )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -254,25 +183,8 @@ class AdsUpdateViewTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class AdsDeleteViewTest(TestCase):
+class AdsDeleteViewTest(AdsMixinViewTest, TestCase):
     """Тесты для класса AdsDeleteView."""
-
-    @classmethod
-    def setUpTestData(cls):
-        """
-        Метод подготавливает тестовую фикстуру товара (услуги) и рекламной компании, создает пользователя и клиента.
-         """
-        cls.product = Product.objects.create(name="Test Product",
-                                             description="Test description",
-                                             price=10.0,
-                                             )
-        cls.ads = Ads.objects.create(name="Test ads",
-                                     description="Test ads description",
-                                     budget=1000,
-                                     product=cls.product
-                                     )
-        cls.user = User.objects.create_user('test_user', password='test_password')
-        cls.client = Client()
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""

@@ -1,52 +1,41 @@
 from django.test import TestCase
 
 from ..models import Ads
-from ...products.models import Product
+from ...products.tests.test_models import ProductModelMixinTest
 
 
-class AdsModelTest(TestCase):
-    """Тесты для модели класса Ads."""
+class AdsModelMixinTest(ProductModelMixinTest, TestCase):
+    """Миксин для тестов модели класса Ads."""
 
     @classmethod
     def setUpTestData(cls):
-        """Метод создает тестовый товар и тестовую рекамную компанию."""
-        cls.product = Product.objects.create(name='Test product',
-                                             description='Test description',
-                                             price=100)
+        """Метод создает тестовый товар и тестовую рекламную компанию."""
+        super().setUpTestData()
         cls.ads = Ads.objects.create(name='Test ads',
                                      description='Test ads description',
                                      budget=1000,
                                      product=cls.product)
+class AdsModelTest(AdsModelMixinTest,TestCase):
+    """Тесты для модели класса Ads."""
 
-    def test_name_label(self):
-        """Тест проверяет корректность описания поля name."""
-        field_label = self.ads._meta.get_field('name').verbose_name
-        self.assertEquals(field_label, 'Название рекламной кампании')
-
-    def test_product_label(self):
-        """Тест проверяет корректность описания поля product."""
-        field_label = self.ads._meta.get_field('product').verbose_name
-        self.assertEquals(field_label, 'Услуга рекламной кампании')
-
-    def test_promotion_channel_label(self):
-        """Тест проверяет корректность описания поля promotion_channel."""
-        field_label = self.ads._meta.get_field('promotion_channel').verbose_name
-        self.assertEquals(field_label, 'Канал продвижения рекламной кампании')
+    def test_verbose_name_label(self):
+        """Проверка заполнения verbose_name."""
+        field_verboses = {'name': 'Название рекламной кампании',
+                          'product': 'Услуга рекламной кампании',
+                          'promotion_channel': 'Канал продвижения рекламной кампании',
+                          'description': 'Описание рекламной кампании',
+                          'budget': 'Бюджет рекламной кампании'}
+        for field, expected_value in field_verboses.items():
+            with self.subTest(field=field):
+                error_name = f'Поле {field} ожидало значение {expected_value}'
+                self.assertEqual(
+                    self.ads._meta.get_field(field).verbose_name,
+                    expected_value, error_name)
 
     def test_promotion_channel_value_default(self):
         """Тест проверяет значение поля promotion_channel по умолчанию."""
         field_value = self.ads.promotion_channel
         self.assertEquals(field_value, 3)
-
-    def test_description_label(self):
-        """Тест проверяет корректность описания поля description."""
-        field_label = self.ads._meta.get_field('description').verbose_name
-        self.assertEquals(field_label, 'Описание рекламной кампании')
-
-    def test_budget_label(self):
-        """Тест проверяет корректность описания поля budget."""
-        field_label = self.ads._meta.get_field('budget').verbose_name
-        self.assertEquals(field_label, 'Бюджет рекламной кампании')
 
     def test_name_max_length(self):
         """Тест проверяет макcимальную длину поля name."""
@@ -61,5 +50,5 @@ class AdsModelTest(TestCase):
 
     def test_get_absolute_url(self):
         """Тест проверяет, что метод get_absolute_url возвращает корректный URL."""
-
         self.assertEquals(self.ads.get_absolute_url(), f"/ads/{self.ads.id}/")
+
