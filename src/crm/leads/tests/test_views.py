@@ -247,7 +247,7 @@ class LeadTransferToActiveViewTest(LeadMixinViewTest, TestCase):
         self.assertEqual(cached_lead_id, self.lead.pk)
 
         self.assertIsInstance(response, HttpResponseRedirect)
-        self.assertEqual(response.url, reverse('crm.customers:customers_create'))
+        self.assertEqual(response.url, reverse('crm.customers:customer_create'))
 
     def test_with_permission_can_transfer_to_active(self):
         """Тест проверяет, что с разрешением can_transfer_to_active пользователь может создавать покупателя."""

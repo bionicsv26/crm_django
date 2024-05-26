@@ -25,7 +25,7 @@ class Customer(models.Model):
 
     def get_absolute_url(self) -> str:
         """Метод возвращает абсолютный адрес контракта."""
-        return reverse("crm.customers:customers_detail", args=[str(self.pk)])
+        return reverse("crm.customers:customer_detail", args=[str(self.pk)])
 
     def __str__(self) -> str:
         return f"Клиент:{self.lead.first_name} {self.lead.last_name}"
