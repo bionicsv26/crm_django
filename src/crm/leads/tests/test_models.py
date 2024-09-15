@@ -56,8 +56,8 @@ class LeadModelTest(LeadModelMixinTest,TestCase):
 
     def test_object_name_is_full_name(self):
         """Тест проверяет, что __str__ возвращает имя и фамилию клиента."""
-        self.assertEquals(str(self.lead), 'Иван Иванов')
+        self.assertEqual(str(self.lead), f"{self.lead.first_name} {self.lead.last_name}")
 
     def test_get_absolute_url(self):
         """Тест проверяет, что метод get_absolute_url возвращает корректный URL."""
-        self.assertEquals(self.lead.get_absolute_url(), f"/leads/{self.lead.id}/")
+        self.assertEqual(self.lead.get_absolute_url(), f"/leads/{self.lead.id}/")

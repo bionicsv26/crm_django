@@ -2,8 +2,6 @@ import datetime
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
-from django.core.cache import cache
-from django.http import HttpResponseRedirect
 from django.test import Client
 from django.test import TestCase
 from django.urls import reverse
@@ -27,8 +25,8 @@ class ContractMixinViewTest(ContractModelMixinTest, TestCase):
         cls.client = Client()
 
 
-class LeadCreateViewTest(ContractMixinViewTest, TestCase):
-    """Тесты для класса contractCreateView."""
+class ContractCreateViewTest(ContractMixinViewTest, TestCase):
+    """Тесты для класса ContractCreateView."""
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -38,7 +36,8 @@ class LeadCreateViewTest(ContractMixinViewTest, TestCase):
 
     def test_success_url(self):
         """
-        Тест проверяет, что после успешного создания нового контракта происходит переход на список контрактов.
+        Тест проверяет, что после успешного создания нового
+        контракта происходит переход на список контрактов.
         """
         form_data = {
             'name': 'Контракт',
@@ -53,12 +52,14 @@ class LeadCreateViewTest(ContractMixinViewTest, TestCase):
         }
 
         contract_count = Contract.objects.count()
-        response = self.client.post(reverse_lazy('crm.contracts:contract_create'), data=form_data, follow=True)
+        response = self.client.post(reverse_lazy('crm.contracts:contract_create'),
+                                    data=form_data,
+                                    follow=True)
         self.assertEqual(Contract.objects.count(), contract_count + 1)
         self.assertRedirects(response, reverse_lazy('crm.contracts:contracts_list'))
 
     def test_form_class(self):
-        """Тест проверяет, что используется форма на основе класса contractForm."""
+        """Тест проверяет, что используется форма на основе класса ContractForm."""
         response = self.client.get(reverse('crm.contracts:contract_create'))
         form = response.context['form']
         self.assertEqual(form.__class__, ContractForm)
@@ -69,7 +70,10 @@ class LeadCreateViewTest(ContractMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'contracts/contracts-create.html')
 
     def test_with_permission_add_contract(self):
-        """Тест проверяет, что с разрешением add_contract пользователь может создавать новые контракты."""
+        """
+        Тест проверяет, что с разрешением add_contract
+        пользователь может создавать новые контракты.
+        """
         response = self.client.get(reverse('crm.contracts:contract_create'))
         self.assertEqual(response.status_code, 200)
 
@@ -80,8 +84,8 @@ class LeadCreateViewTest(ContractMixinViewTest, TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class LeadListViewTest(ContractMixinViewTest, TestCase):
-    """Тесты для класса LeadListView."""
+class ContractListViewTest(ContractMixinViewTest, TestCase):
+    """Тесты для класса ContractListView."""
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -100,7 +104,10 @@ class LeadListViewTest(ContractMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'contracts/contracts-list.html')
 
     def test_with_permission_view_contract(self):
-        """Тест проверяет, что с разрешением view_contract пользователь может видеть список контрактов."""
+        """
+        Тест проверяет, что с разрешением view_contract
+        пользователь может видеть список контрактов.
+        """
         response = self.client.get(reverse('crm.contracts:contracts_list'))
         self.assertEqual(response.status_code, 200)
 
@@ -111,8 +118,8 @@ class LeadListViewTest(ContractMixinViewTest, TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class LeadDetailViewTest(ContractMixinViewTest, TestCase):
-    """Тесты для класса LeadDetailView."""
+class ContractDetailViewTest(ContractMixinViewTest, TestCase):
+    """Тесты для класса ContractDetailView."""
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -122,12 +129,17 @@ class LeadDetailViewTest(ContractMixinViewTest, TestCase):
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.contracts:contract_detail', kwargs={'pk': self.contract.pk}))
+        response = self.client.get(reverse('crm.contracts:contract_detail',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertTemplateUsed(response, 'contracts/contracts-detail.html')
 
     def test_with_permission_view_contract(self):
-        """Тест проверяет, что с разрешением view_contract пользователь может видеть детальное описание контракта."""
-        response = self.client.get(reverse('crm.contracts:contract_detail', kwargs={'pk': self.contract.pk}))
+        """
+        Тест проверяет, что с разрешением view_contract
+        пользователь может видеть детальное описание контракта.
+        """
+        response = self.client.get(reverse('crm.contracts:contract_detail',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['contract'].name, self.contract.name)
         self.assertEqual(response.context['contract'].lead.pk, self.contract.lead.pk)
@@ -135,19 +147,23 @@ class LeadDetailViewTest(ContractMixinViewTest, TestCase):
         self.assertEqual(response.context['contract'].product.pk, self.contract.product.pk)
         self.assertEqual(response.context['contract'].comment, self.contract.comment)
         self.assertEqual(response.context['contract'].cost, self.contract.cost)
-        self.assertEqual(response.context['contract'].conclusion_day, datetime.date.fromisoformat(self.contract.conclusion_day))
-        self.assertEqual(response.context['contract'].start_day, datetime.date.fromisoformat(self.contract.start_day))
-        self.assertEqual(response.context['contract'].end_day, datetime.date.fromisoformat(self.contract.end_day))
+        self.assertEqual(response.context['contract'].conclusion_day,
+                         datetime.date.fromisoformat(self.contract.conclusion_day))
+        self.assertEqual(response.context['contract'].start_day,
+                         datetime.date.fromisoformat(self.contract.start_day))
+        self.assertEqual(response.context['contract'].end_day,
+                         datetime.date.fromisoformat(self.contract.end_day))
 
     def test_without_permission_view_contract(self):
         """Тест проверяет, что без разрешения view_contract пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.contracts:contract_detail', kwargs={'pk': self.contract.pk}))
+        response = self.client.get(reverse('crm.contracts:contract_detail',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertEqual(response.status_code, 403)
 
 
-class LeadUpdateViewTest(ContractMixinViewTest, TestCase):
-    """Тесты для класса LeadUpdateView."""
+class ContractUpdateViewTest(ContractMixinViewTest, TestCase):
+    """Тесты для класса ContractUpdateView."""
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -157,7 +173,8 @@ class LeadUpdateViewTest(ContractMixinViewTest, TestCase):
 
     def test_success_update_contract(self):
         """
-        Тест проверяет, что после успешного обновления данных контракта пользователь направляется на список контрактов.
+        Тест проверяет, что после успешного обновления данных контракта
+        пользователь направляется на список контрактов.
         """
         update_data = {
             'name': 'Новый контракт',
@@ -171,7 +188,8 @@ class LeadUpdateViewTest(ContractMixinViewTest, TestCase):
             'end_day': '2024-03-28'
         }
 
-        response = self.client.post(reverse_lazy('crm.contracts:contract_edit', kwargs={'pk': self.contract.pk}),
+        response = self.client.post(reverse_lazy('crm.contracts:contract_edit',
+                                                 kwargs={'pk': self.contract.pk}),
                                     data=update_data)
 
         contract_after_update = Contract.objects.get(pk=self.contract.pk)
@@ -181,31 +199,40 @@ class LeadUpdateViewTest(ContractMixinViewTest, TestCase):
         self.assertEqual(contract_after_update.product.pk, update_data['product'])
         self.assertEqual(contract_after_update.comment, update_data['comment'])
         self.assertEqual(contract_after_update.cost, update_data['cost'])
-        self.assertEqual(contract_after_update.conclusion_day, datetime.date.fromisoformat(update_data['conclusion_day']))
-        self.assertEqual(contract_after_update.start_day, datetime.date.fromisoformat(update_data['start_day']))
-        self.assertEqual(contract_after_update.end_day, datetime.date.fromisoformat(update_data['end_day']))
+        self.assertEqual(contract_after_update.conclusion_day,
+                         datetime.date.fromisoformat(update_data['conclusion_day']))
+        self.assertEqual(contract_after_update.start_day,
+                         datetime.date.fromisoformat(update_data['start_day']))
+        self.assertEqual(contract_after_update.end_day,
+                         datetime.date.fromisoformat(update_data['end_day']))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse_lazy('crm.contracts:contracts_list'))
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.contracts:contract_edit', kwargs={'pk': self.contract.pk}))
+        response = self.client.get(reverse('crm.contracts:contract_edit',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertTemplateUsed(response, 'contracts/contracts-edit.html')
 
     def test_with_permission_change_contract(self):
-        """Тест проверяет, что с разрешением change_contract пользователь может изменять данные контракта."""
-        response = self.client.get(reverse('crm.contracts:contract_edit', kwargs={'pk': self.contract.pk}))
+        """
+        Тест проверяет, что с разрешением change_contract
+        пользователь может изменять данные контракта.
+        """
+        response = self.client.get(reverse('crm.contracts:contract_edit',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_without_permission_change_contract(self):
         """Тест проверяет, что без разрешения change_contract пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.contracts:contract_edit', kwargs={'pk': self.contract.pk}))
+        response = self.client.get(reverse('crm.contracts:contract_edit',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertEqual(response.status_code, 403)
 
 
-class LeadDeleteViewTest(ContractMixinViewTest, TestCase):
-    """Тесты для класса LeadDeleteView."""
+class ContractDeleteViewTest(ContractMixinViewTest, TestCase):
+    """Тесты для класса ContractDeleteView."""
 
     def setUp(self):
         """Метод подготавливает тестовые фикстуры пользователя, разрешения, клиента."""
@@ -214,9 +241,13 @@ class LeadDeleteViewTest(ContractMixinViewTest, TestCase):
         self.client.login(username='test_user', password='test_password')
 
     def test_success_delete_contract(self):
-        """Тест проверяет, что после успешного удаления контракта пользователь направляется на список контрактов."""
+        """
+        Тест проверяет, что после успешного удаления контракта
+        пользователь направляется на список контрактов.
+        """
         lead_count = Contract.objects.count()
-        response = self.client.post(reverse_lazy('crm.contracts:contract_delete', kwargs={'pk': self.contract.pk}))
+        response = self.client.post(reverse_lazy('crm.contracts:contract_delete',
+                                                 kwargs={'pk': self.contract.pk}))
         self.assertEqual(Contract.objects.count(), lead_count - 1)
 
         self.assertEqual(response.status_code, 302)
@@ -224,16 +255,22 @@ class LeadDeleteViewTest(ContractMixinViewTest, TestCase):
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.contracts:contract_delete', kwargs={'pk': self.contract.pk}))
+        response = self.client.get(reverse('crm.contracts:contract_delete',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertTemplateUsed(response, 'contracts/contracts-delete.html')
 
     def test_with_permission_delete_contract(self):
-        """Тест проверяет, что с разрешением delete_contract пользователь может удалять контракты."""
-        response = self.client.get(reverse('crm.contracts:contract_delete', kwargs={'pk': self.contract.pk}))
+        """
+        Тест проверяет, что с разрешением delete_contract
+        пользователь может удалять контракты.
+        """
+        response = self.client.get(reverse('crm.contracts:contract_delete',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_without_permission_delete_contract(self):
         """Тест проверяет, что без разрешения delete_contract пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.contracts:contract_delete', kwargs={'pk': self.contract.pk}))
+        response = self.client.get(reverse('crm.contracts:contract_delete',
+                                           kwargs={'pk': self.contract.pk}))
         self.assertEqual(response.status_code, 403)

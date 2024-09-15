@@ -34,7 +34,8 @@ class CustomerCreateViewTest(CustomerMixinViewTest, TestCase):
 
     def test_success_url(self):
         """
-        Тест проверяет, что после успешного создания покупателя происходит переход на список покупателей.
+        Тест проверяет, что после успешного создания
+        покупателя происходит переход на список покупателей.
         """
         form_data = {
             'lead': self.lead.pk,
@@ -44,7 +45,9 @@ class CustomerCreateViewTest(CustomerMixinViewTest, TestCase):
         }
 
         customer_count = Customer.objects.count()
-        response = self.client.post(reverse_lazy('crm.customers:customer_create'), data=form_data, follow=True)
+        response = self.client.post(reverse_lazy('crm.customers:customer_create'),
+                                    data=form_data,
+                                    follow=True)
         self.assertEqual(Customer.objects.count(), customer_count + 1)
         self.assertRedirects(response, reverse_lazy('crm.customers:customers_list'))
 
@@ -60,7 +63,10 @@ class CustomerCreateViewTest(CustomerMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'customers/customers-create.html')
 
     def test_with_permission_add_customer(self):
-        """Тест проверяет, что с разрешением add_customer пользователь может создавать пользователей."""
+        """
+        Тест проверяет, что с разрешением add_customer
+        пользователь может создавать пользователей.
+        """
         response = self.client.get(reverse('crm.customers:customer_create'))
         self.assertEqual(response.status_code, 200)
 
@@ -91,7 +97,10 @@ class CustomerListViewTest(CustomerMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'customers/customers-list.html')
 
     def test_with_permission_view_customer(self):
-        """Тест проверяет, что с разрешением view_customer пользователь может видеть список покупателей."""
+        """
+        Тест проверяет, что с разрешением view_customer
+        пользователь может видеть список покупателей.
+        """
         response = self.client.get(reverse('crm.customers:customers_list'))
         self.assertEqual(response.status_code, 200)
 
@@ -113,12 +122,17 @@ class CustomerDetailViewTest(CustomerMixinViewTest, TestCase):
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.customers:customer_detail', kwargs={'pk': self.customer.pk}))
+        response = self.client.get(reverse('crm.customers:customer_detail',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertTemplateUsed(response, 'customers/customers-detail.html')
 
     def test_with_permission_view_customer(self):
-        """Тест проверяет, что с разрешением view_customer пользователь может видеть детальное описание покупателя."""
-        response = self.client.get(reverse('crm.customers:customer_detail', kwargs={'pk': self.customer.pk}))
+        """
+        Тест проверяет, что с разрешением view_customer
+        пользователь может видеть детальное описание покупателя.
+        """
+        response = self.client.get(reverse('crm.customers:customer_detail',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['customer'].lead.pk, self.customer.lead.pk)
         self.assertEqual(response.context['customer'].ads.pk, self.customer.ads.pk)
@@ -128,7 +142,8 @@ class CustomerDetailViewTest(CustomerMixinViewTest, TestCase):
     def test_without_permission_view_customer(self):
         """Тест проверяет, что без разрешения view_contract пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.customers:customer_detail', kwargs={'pk': self.customer.pk}))
+        response = self.client.get(reverse('crm.customers:customer_detail',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertEqual(response.status_code, 403)
 
 
@@ -143,7 +158,8 @@ class CustomerUpdateViewTest(CustomerMixinViewTest, TestCase):
 
     def test_success_update_contract(self):
         """
-        Тест проверяет, что после успешного обновления данных покупателя пользователь направляется на список покупателей.
+        Тест проверяет, что после успешного обновления данных
+        покупателя пользователь направляется на список покупателей.
         """
         update_data = {
             'lead': self.lead.pk,
@@ -152,7 +168,8 @@ class CustomerUpdateViewTest(CustomerMixinViewTest, TestCase):
             'comment': '4444',
         }
 
-        response = self.client.post(reverse_lazy('crm.customers:customer_edit', kwargs={'pk': self.customer.pk}),
+        response = self.client.post(reverse_lazy('crm.customers:customer_edit',
+                                                 kwargs={'pk': self.customer.pk}),
                                     data=update_data)
 
         customer_after_update = Customer.objects.get(pk=self.customer.pk)
@@ -165,18 +182,24 @@ class CustomerUpdateViewTest(CustomerMixinViewTest, TestCase):
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.customers:customer_edit', kwargs={'pk': self.customer.pk}))
+        response = self.client.get(reverse('crm.customers:customer_edit',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertTemplateUsed(response, 'customers/customers-edit.html')
 
     def test_with_permission_change_customer(self):
-        """Тест проверяет, что с разрешением change_customer пользователь может изменять данные покупателя."""
-        response = self.client.get(reverse('crm.customers:customer_edit', kwargs={'pk': self.customer.pk}))
+        """
+        Тест проверяет, что с разрешением change_customer
+        пользователь может изменять данные покупателя.
+        """
+        response = self.client.get(reverse('crm.customers:customer_edit',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_without_permission_change_customer(self):
         """Тест проверяет, что без разрешения change_customer пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.customers:customer_edit', kwargs={'pk': self.customer.pk}))
+        response = self.client.get(reverse('crm.customers:customer_edit',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertEqual(response.status_code, 403)
 
 
@@ -189,10 +212,14 @@ class CustomerDeleteViewTest(CustomerMixinViewTest, TestCase):
         self.user.user_permissions.add(self.permission)
         self.client.login(username='test_user', password='test_password')
 
-    def test_success_delete_contractcustomer(self):
-        """Тест проверяет, что после успешного удаления покупателя пользователь направляется на список покупателей."""
+    def test_success_delete_customer(self):
+        """
+        Тест проверяет, что после успешного удаления покупателя
+        пользователь направляется на список покупателей.
+        """
         customer_count = Customer.objects.count()
-        response = self.client.post(reverse_lazy('crm.customers:customer_delete', kwargs={'pk': self.customer.pk}))
+        response = self.client.post(reverse_lazy('crm.customers:customer_delete',
+                                                 kwargs={'pk': self.customer.pk}))
         self.assertEqual(Customer.objects.count(), customer_count - 1)
 
         self.assertEqual(response.status_code, 302)
@@ -200,16 +227,22 @@ class CustomerDeleteViewTest(CustomerMixinViewTest, TestCase):
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.customers:customer_delete', kwargs={'pk': self.customer.pk}))
+        response = self.client.get(reverse('crm.customers:customer_delete',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertTemplateUsed(response, 'customers/customers-delete.html')
 
     def test_with_permission_delete_customer(self):
-        """Тест проверяет, что с разрешением delete_customer пользователь может удалять покупателей."""
-        response = self.client.get(reverse('crm.customers:customer_delete', kwargs={'pk': self.customer.pk}))
+        """
+        Тест проверяет, что с разрешением delete_customer
+        пользователь может удалять покупателей.
+        """
+        response = self.client.get(reverse('crm.customers:customer_delete',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_without_permission_delete_customer(self):
         """Тест проверяет, что без разрешения delete_customer пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.customers:customer_delete', kwargs={'pk': self.customer.pk}))
+        response = self.client.get(reverse('crm.customers:customer_delete',
+                                           kwargs={'pk': self.customer.pk}))
         self.assertEqual(response.status_code, 403)

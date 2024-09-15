@@ -46,5 +46,6 @@ class ContractForm(MixinProductForm, MixinLeadAdsForm):
         ads = self.cleaned_data['ads']
         product = self.cleaned_data['product']
         if product.id != ads.product.id:
-            self.add_error('product', 'Выбранная услуга не соответствует выбранной рекламной компании')
+            self.add_error('product',
+                           'Выбранная услуга не соответствует выбранной рекламной компании')
         return product

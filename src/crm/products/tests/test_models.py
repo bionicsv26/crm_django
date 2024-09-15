@@ -9,7 +9,9 @@ class ProductModelMixinTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Метод создает тестовый товар."""
-        cls.product = Product.objects.create(name='Test product', description='Test description', price=100)
+        cls.product = Product.objects.create(name='Test product',
+                                             description='Test description',
+                                             price=100)
 
 class ProductModelTest(ProductModelMixinTest, TestCase):
     """Тесты для модели класса Product."""
@@ -29,14 +31,12 @@ class ProductModelTest(ProductModelMixinTest, TestCase):
     def test_name_max_length(self):
         """Тест проверяет макcимальную длину поля name."""
         max_length = self.product._meta.get_field('name').max_length
-        self.assertEquals(max_length, 150)
+        self.assertEqual(max_length, 150)
 
     def test_object_name_is_name(self):
         """Тест проверяет, что __str__ возвращает значение поля name."""
-        self.assertEquals(str(self.product), self.product.name)
-        object_name = self.product.name
-        self.assertEquals(object_name, str(self.product))
+        self.assertEqual(str(self.product), self.product.name)
 
     def test_get_absolute_url(self):
         """Тест проверяет, что метод get_absolute_url возвращает корректный URL."""
-        self.assertEquals(self.product.get_absolute_url(), f"/products/{self.product.id}/")
+        self.assertEqual(self.product.get_absolute_url(), f"/products/{self.product.id}/")

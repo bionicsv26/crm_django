@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from crm.ads.forms import AdsForm
 from crm.ads.models import Ads
 from crm.ads.tests.test_models import AdsModelMixinTest
+from crm.customers.tests.test_views import CustomerMixinViewTest
 
 User = get_user_model()
 
@@ -34,7 +35,8 @@ class AdsCreateViewTest(AdsMixinViewTest, TestCase):
 
     def test_success_url(self):
         """
-        Тест проверяет, что после успешного создания новой рекламной компании происходит переход на список компаний.
+        Тест проверяет, что после успешного создания новой рекламной
+        компании происходит переход на список компаний.
         """
         form_data = {
             'name': 'Test ads',
@@ -61,7 +63,10 @@ class AdsCreateViewTest(AdsMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'ads/ads-create.html')
 
     def test_with_permission_add_ads(self):
-        """Тест проверяет, что с разрешением add_ads пользователь может создавать новые рекламные компании."""
+        """
+        Тест проверяет, что с разрешением add_ads
+        пользователь может создавать новые рекламные компании.
+        """
         response = self.client.get(reverse('crm.ads:ads_create'))
         self.assertEqual(response.status_code, 200)
 
@@ -82,7 +87,7 @@ class AdsListViewTest(AdsMixinViewTest, TestCase):
         self.client.login(username='test_user', password='test_password')
 
     def test_count_ads_in_list(self):
-        """Тест проверяет, что список рекламных компаний содержит 3 элемента."""
+        """Тест проверяет, что список рекламных компаний содержит 1 элемент."""
         response = self.client.get(reverse_lazy('crm.ads:ads_list'))
         self.assertEqual(len(response.context['ads']), 1)
 
@@ -118,7 +123,10 @@ class AdsDetailViewTest(AdsMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'ads/ads-detail.html')
 
     def test_with_permission_view_ads(self):
-        """Тест проверяет, что с разрешением view_ads пользователь может видеть детальное описание компании."""
+        """
+        Тест проверяет, что с разрешением view_ads пользователь
+        может видеть детальное описание компании.
+        """
         response = self.client.get(reverse('crm.ads:ads_detail', kwargs={'pk': self.ads.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['ads'].name, self.ads.name)
@@ -145,7 +153,8 @@ class AdsUpdateViewTest(AdsMixinViewTest, TestCase):
 
     def test_success_update_ads(self):
         """
-        Тест проверяет, что после успешного обновления данных компании пользователь направляется на список компаний.
+        Тест проверяет, что после успешного обновления данных
+        компании пользователь направляется на список компаний.
         """
         update_data = {
             'name': 'Test updated ads',
@@ -172,7 +181,10 @@ class AdsUpdateViewTest(AdsMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'ads/ads-edit.html')
 
     def test_with_permission_change_ads(self):
-        """Тест проверяет, что с разрешением change_ads пользователь может создавать новые компании."""
+        """
+        Тест проверяет, что с разрешением change_ads
+        пользователь может создавать новые компании.
+        """
         response = self.client.get(reverse('crm.ads:ads_edit', kwargs={'pk': self.ads.pk}))
         self.assertEqual(response.status_code, 200)
 
@@ -193,7 +205,10 @@ class AdsDeleteViewTest(AdsMixinViewTest, TestCase):
         self.client.login(username='test_user', password='test_password')
 
     def test_success_delete_ads(self):
-        """Тест проверяет, что после успешного удаления компании пользователь направляется на список компаний."""
+        """
+        Тест проверяет, что после успешного удаления
+        компании пользователь направляется на список компаний.
+        """
         ads_count = Ads.objects.count()
         response = self.client.post(reverse_lazy('crm.ads:ads_delete', kwargs={'pk': self.ads.pk}))
         self.assertEqual(Ads.objects.count(), ads_count - 1)
@@ -216,3 +231,35 @@ class AdsDeleteViewTest(AdsMixinViewTest, TestCase):
         self.user.user_permissions.remove(self.permission)
         response = self.client.get(reverse('crm.ads:ads_delete', kwargs={'pk': self.ads.pk}))
         self.assertEqual(response.status_code, 403)
+
+class AdsStatisticViewTest(CustomerMixinViewTest, TestCase):
+    """Тесты для класса AdsStatisticView."""
+
+    def setUp(self):
+        """Метод подготавливает тестовые фикстуры пользователя, клиента."""
+        self.client.login(username='test_user', password='test_password')
+
+    def test_used_correct_template(self):
+        """Тест проверяет, что используется корректный шаблон."""
+        response = self.client.get(reverse('crm.ads:ads_statistic'))
+        self.assertTemplateUsed(response, 'ads/ads-statistic.html')
+
+    def test_used_correct_queryset(self):
+        """Тест проверяет, что queryset выдает корректные данные по статистике ."""
+        response = self.client.get(reverse('crm.ads:ads_statistic'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['ads'][0]['leads_count'], 1)
+        self.assertEqual(response.context['ads'][0]['customers_count'], 1)
+        self.assertEqual(response.context['ads'][0]['ads_budget'], 1000)
+        self.assertEqual(response.context['ads'][0]['ads_profit'], 12000)
+        self.assertEqual(response.context['ads'][0]['profit'], 12.0)
+
+    def test_logout(self):
+        """
+        Тест проверяет, что при выходе пользователя из
+        учетной записи его перебрасывает на страницу входа .
+        """
+        self.client.logout()
+        response = self.client.get(reverse('crm.ads:ads_statistic'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/login/?next=/ads/statistic/')

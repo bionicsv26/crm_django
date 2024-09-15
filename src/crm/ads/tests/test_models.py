@@ -35,20 +35,17 @@ class AdsModelTest(AdsModelMixinTest,TestCase):
     def test_promotion_channel_value_default(self):
         """Тест проверяет значение поля promotion_channel по умолчанию."""
         field_value = self.ads.promotion_channel
-        self.assertEquals(field_value, 3)
+        self.assertEqual(field_value, 3)
 
     def test_name_max_length(self):
         """Тест проверяет макcимальную длину поля name."""
         max_length = self.ads._meta.get_field('name').max_length
-        self.assertEquals(max_length, 150)
+        self.assertEqual(max_length, 150)
 
     def test_object_name_is_name(self):
         """Тест проверяет, что __str__ возвращает значение поля name."""
-        self.assertEquals(str(self.ads), self.ads.name)
-        object_name = self.ads.name
-        self.assertEquals(object_name, str(self.ads))
+        self.assertEqual(str(self.ads), self.ads.name)
 
     def test_get_absolute_url(self):
         """Тест проверяет, что метод get_absolute_url возвращает корректный URL."""
-        self.assertEquals(self.ads.get_absolute_url(), f"/ads/{self.ads.id}/")
-
+        self.assertEqual(self.ads.get_absolute_url(), f"/ads/{self.ads.id}/")

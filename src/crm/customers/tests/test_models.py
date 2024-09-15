@@ -9,13 +9,16 @@ class CustomerModelMixinTest(ContractModelMixinTest, TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        """Метод создает тестовые данные: товар, рекламную компанию, потенциального клиента, контракт и клиента."""
+        """
+        Метод создает тестовые данные: товар, рекламную компанию,
+        потенциального клиента, контракт и покупателя.
+        """
         super().setUpTestData()
         cls.lead.to_active = True
         cls.customer = Customer.objects.create(lead=cls.lead,
                                                ads=cls.ads,
                                                contract=cls.contract,
-                                               comment='Первый комментарий по клиенту',
+                                               comment='Первый комментарий по покупателю',
                                                )
 
 class CustomerModelTest(CustomerModelMixinTest,TestCase):
@@ -38,8 +41,8 @@ class CustomerModelTest(CustomerModelMixinTest,TestCase):
     def test_object_name_is_full_name(self):
         """Тест проверяет, что __str__ возвращает имя и фамилию покупателя."""
         test_name = f"Клиент:{self.lead.first_name} {self.lead.last_name}"
-        self.assertEquals(str(self.customer), test_name)
+        self.assertEqual(str(self.customer), test_name)
 
     def test_get_absolute_url(self):
         """Тест проверяет, что метод get_absolute_url возвращает корректный URL."""
-        self.assertEquals(self.customer.get_absolute_url(), f"/customers/{self.customer.pk}/")
+        self.assertEqual(self.customer.get_absolute_url(), f"/customers/{self.customer.pk}/")

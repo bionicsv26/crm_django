@@ -9,7 +9,10 @@ class ContractModelMixinTest(LeadModelMixinTest, TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        """Метод создает тестовые данные: товар, рекламную компанию, потенциального клиента и контракт."""
+        """
+        Метод создает тестовые данные: товар, рекламную
+        компанию, потенциального клиента и контракт.
+        """
         super().setUpTestData()
         cls.contract = Contract.objects.create(name='Договор',
                                                lead=cls.lead,
@@ -53,8 +56,8 @@ class ContractModelTest(ContractModelMixinTest,TestCase):
     def test_object_name_is_full_name(self):
         """Тест проверяет, что __str__ возвращает №, ФИО и услугу по контракту."""
         test_name = f"Контракт № {self.contract.pk}, клиент:{self.lead}, услуга:{self.product}"
-        self.assertEquals(str(self.contract), test_name)
+        self.assertEqual(str(self.contract), test_name)
 
     def test_get_absolute_url(self):
         """Тест проверяет, что метод get_absolute_url возвращает корректный URL."""
-        self.assertEquals(self.contract.get_absolute_url(), f"/contracts/{self.contract.pk}/")
+        self.assertEqual(self.contract.get_absolute_url(), f"/contracts/{self.contract.pk}/")

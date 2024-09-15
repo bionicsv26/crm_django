@@ -43,4 +43,4 @@ class Lead(models.Model):
 
     def is_active(self) -> bool:
         """Метод проверяет переведен ли потенциальный клиент в активные."""
-        return self.to_active is True
+        return self.to_active

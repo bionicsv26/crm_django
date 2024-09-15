@@ -35,7 +35,10 @@ class ProductCreateViewTest(ProductMixinViewTest, TestCase):
         self.client.login(username='test_user', password='test_password')
 
     def test_success_url(self):
-        """Тест проверяет, что после успешного создания нового товара (услуги) происходит переход на список товаров."""
+        """
+        Тест проверяет, что после успешного создания нового
+        товара (услуги) происходит переход на список товаров.
+        """
         form_data = {
             'name': 'Test new product',
             'description': 'Test description of new product',
@@ -43,7 +46,9 @@ class ProductCreateViewTest(ProductMixinViewTest, TestCase):
         }
 
         products_count = Product.objects.count()
-        response = self.client.post(reverse_lazy('crm.products:product_create'), data=form_data, follow=True)
+        response = self.client.post(reverse_lazy('crm.products:product_create'),
+                                    data=form_data,
+                                    follow=True)
         self.assertEqual(Product.objects.count(), products_count + 1)
         self.assertRedirects(response, reverse_lazy('crm.products:products_list'))
 
@@ -59,7 +64,10 @@ class ProductCreateViewTest(ProductMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'products/products-create.html')
 
     def test_with_permission_add_product(self):
-        """Тест проверяет, что с разрешением add_product пользователь может создавать новые товары."""
+        """
+        Тест проверяет, что с разрешением add_product
+        пользователь может создавать новые товары.
+        """
         response = self.client.get(reverse('crm.products:product_create'))
         self.assertEqual(response.status_code, 200)
 
@@ -80,7 +88,7 @@ class ProductListViewTest(ProductMixinViewTest, TestCase):
         self.client.login(username='test_user', password='test_password')
 
     def test_count_products_in_list(self):
-        """Тест проверяет, что список товаров (услуг) содержит 3 элемента."""
+        """Тест проверяет, что список товаров (услуг) содержит 1 элемент."""
         response = self.client.get(reverse_lazy('crm.products:products_list'))
         self.assertEqual(len(response.context['products']), 1)
 
@@ -90,7 +98,10 @@ class ProductListViewTest(ProductMixinViewTest, TestCase):
         self.assertTemplateUsed(response, 'products/products-list.html')
 
     def test_with_permission_view_product(self):
-        """Тест проверяет, что с разрешением view_product пользователь может видеть список товаров."""
+        """
+        Тест проверяет, что с разрешением view_product
+        пользователь может видеть список товаров.
+        """
         response = self.client.get(reverse('crm.products:products_list'))
         self.assertEqual(response.status_code, 200)
 
@@ -112,19 +123,25 @@ class ProductDetailViewTest(ProductMixinViewTest, TestCase):
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.products:product_detail', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_detail',
+                                           kwargs={'pk': self.product.pk}))
         self.assertTemplateUsed(response, 'products/products-detail.html')
 
     def test_with_permission_view_product(self):
-        """Тест проверяет, что с разрешением view_product пользователь может видеть детальное описание товара."""
-        response = self.client.get(reverse('crm.products:product_detail', kwargs={'pk': self.product.pk}))
+        """
+        Тест проверяет, что с разрешением view_product
+        пользователь может видеть детальное описание товара.
+        """
+        response = self.client.get(reverse('crm.products:product_detail',
+                                           kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['product'].name, 'Test product')
 
     def test_without_permission_view_product(self):
         """Тест проверяет, что без разрешения view_product пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.products:product_detail', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_detail',
+                                           kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 403)
 
 
@@ -138,34 +155,42 @@ class ProductUpdateViewTest(ProductMixinViewTest, TestCase):
         self.client.login(username='test_user', password='test_password')
 
     def test_success_update_product(self):
-        """Тест проверяет, что после успешного обновления данных товара пользователь направляется на страницу товара."""
+        """
+        Тест проверяет, что после успешного обновления данных
+        товара пользователь направляется на страницу товара.
+        """
         update_data = {
             'name': 'Test New Product',
             'description': 'Test new description',
             'price': 222,
         }
 
-        response = self.client.post(reverse_lazy('crm.products:product_edit', kwargs={'pk': self.product.pk}),
+        response = self.client.post(reverse_lazy('crm.products:product_edit',
+                                                 kwargs={'pk': self.product.pk}),
                                     data=update_data)
         product_after_update = Product.objects.get(pk=self.product.pk)
         self.assertEqual(product_after_update.name, update_data['name'])
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse_lazy('crm.products:product_detail', kwargs={'pk': self.product.pk}))
+        self.assertEqual(response.url, reverse_lazy('crm.products:product_detail',
+                                                    kwargs={'pk': self.product.pk}))
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.products:product_edit', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_edit',
+                                           kwargs={'pk': self.product.pk}))
         self.assertTemplateUsed(response, 'products/products-edit.html')
 
     def test_with_permission_change_product(self):
         """Тест проверяет, что с разрешением change_product пользователь может создавать новые товары."""
-        response = self.client.get(reverse('crm.products:product_edit', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_edit',
+                                           kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_without_permission_change_product(self):
         """Тест проверяет, что без разрешения change_product пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.products:product_edit', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_edit',
+                                           kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 403)
 
 
@@ -179,9 +204,13 @@ class ProductDeleteViewTest(ProductMixinViewTest, TestCase):
         self.client.login(username='test_user', password='test_password')
 
     def test_success_delete_product(self):
-        """Тест проверяет, что после успешного удаления товара пользователь направляется на список товаров."""
+        """
+        Тест проверяет, что после успешного удаления товара
+        пользователь направляется на список товаров.
+        """
         products_count = Product.objects.count()
-        response = self.client.post(reverse_lazy('crm.products:product_delete', kwargs={'pk': self.product.pk}))
+        response = self.client.post(reverse_lazy('crm.products:product_delete',
+                                                 kwargs={'pk': self.product.pk}))
         self.assertEqual(Product.objects.count(), products_count - 1)
 
         self.assertEqual(response.status_code, 302)
@@ -189,18 +218,21 @@ class ProductDeleteViewTest(ProductMixinViewTest, TestCase):
 
     def test_used_correct_template(self):
         """Тест проверяет, что используется корректный шаблон."""
-        response = self.client.get(reverse('crm.products:product_delete', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_delete',
+                                           kwargs={'pk': self.product.pk}))
         self.assertTemplateUsed(response, 'products/products-delete.html')
 
     def test_with_permission_delete_product(self):
         """Тест проверяет, что с разрешением delete_product пользователь может удалять товары."""
-        response = self.client.get(reverse('crm.products:product_delete', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_delete',
+                                           kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_without_permission_delete_product(self):
         """Тест проверяет, что без разрешения delete_product пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.products:product_delete', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_delete',
+                                           kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 403)
 
 
@@ -222,7 +254,8 @@ class ProductTransferToAdsViewTest(ProductMixinViewTest, TestCase):
         cached_product_id = cache.get('product_id')
         self.assertIsNone(cached_product_id)
 
-        response = self.client.get(reverse('crm.products:product_to_ads', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_to_ads',
+                                           kwargs={'pk': self.product.pk}))
         cached_product_id = cache.get('product_id')
         self.assertEqual(cached_product_id, self.product.pk)
 
@@ -230,12 +263,17 @@ class ProductTransferToAdsViewTest(ProductMixinViewTest, TestCase):
         self.assertEqual(response.url, reverse('crm.ads:ads_create'))
 
     def test_with_permission_add_ads(self):
-        """Тест проверяет, что с разрешением add_ads пользователь может создавать рекламную кампанию."""
-        response = self.client.get(reverse('crm.products:product_to_ads', kwargs={'pk': self.product.pk}))
+        """
+        Тест проверяет, что с разрешением add_ads
+        пользователь может создавать рекламную кампанию.
+        """
+        response = self.client.get(reverse('crm.products:product_to_ads',
+                                           kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 302)
 
     def test_without_permission_add_ads(self):
         """Тест проверяет, что без разрешения add_ads пользователь получает ошибку 403."""
         self.user.user_permissions.remove(self.permission)
-        response = self.client.get(reverse('crm.products:product_to_ads', kwargs={'pk': self.product.pk}))
+        response = self.client.get(reverse('crm.products:product_to_ads',
+                                           kwargs={'pk': self.product.pk}))
         self.assertEqual(response.status_code, 403)

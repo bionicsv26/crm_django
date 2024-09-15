@@ -42,7 +42,10 @@ def get_data_for_form() -> Optional[dict]:
         ads = Ads.objects.filter(lead__id=lead_id).first()
         product = Product.objects.filter(ads__lead__id=lead_id).first()
         contract = Contract.objects.filter(lead__id=lead_id).first()
-        dict_data_for_form: dict = {'lead': lead, 'ads': ads, 'product': product, 'contract': contract}
+        dict_data_for_form: dict = {'lead': lead,
+                                    'ads': ads,
+                                    'product': product,
+                                    'contract': contract}
         return dict_data_for_form
     return None
 
